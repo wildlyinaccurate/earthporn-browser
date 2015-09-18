@@ -1,13 +1,15 @@
 module Browser where
 
-import Http
+import Array
+import Json.Decode as Json exposing ((:=))
+import List exposing (length)
+import Task
+
+import Effects exposing (Effects)
 import Html exposing (..)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
-import Json.Decode as Json exposing ((:=))
-import Task
-import Effects exposing (Effects)
-import Array
+import Http
 
 
 -- MODEL
