@@ -1,6 +1,6 @@
 I wanted an interface for browsing through images from [r/earthporn](https://www.reddit.com/r/earthporn). This is it.
 
-Still a work in progress; build/view it with `elm-reactor`.
+Still a work in progress; build/view it with `elm-reactor`. Or see the [live demo](https://wildlyinaccurate.com/earthporn-browser/).
 
 # LICENSE
 
