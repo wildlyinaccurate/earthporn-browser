@@ -41,6 +41,25 @@ init =
   )
 
 
+currentPost : Model -> Maybe Post
+currentPost model =
+  Array.get model.position (Array.fromList model.posts)
+
+
+imageUrl : Maybe Post -> String
+imageUrl maybePost =
+  case maybePost of
+    Just post -> post.source.url
+    Nothing -> "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+
+
+imageDescription : Maybe Post -> String
+imageDescription maybePost =
+  case maybePost of
+    Just post -> post.title
+    Nothing -> "Loading..."
+
+
 -- UPDATE
 
 type Action
@@ -58,7 +77,7 @@ update action model =
         )
 
     NextPost ->
-        ( { model | position <- min (List.length model.posts) (model.position + 1) }
+        ( { model | position <- min (length model.posts) (model.position + 1) }
         , Effects.none
         )
 
@@ -75,16 +94,20 @@ update action model =
 
 view : Signal.Address Action -> Model -> Html
 view address model =
-  let currentPost = toString (model.position + 1)
-      totalPosts = toString (List.length (model.posts))
+  let currentPosition = toString (model.position + 1)
+      totalPosts = toString (length (model.posts))
   in
     div
       [ class "container" ]
       [ div
-        [ class "image--current"
-        , imgStyle (currentImgUrl model)
+        [ class "image"
+        , imgStyle (imageUrl (currentPost model))
         ]
         []
+
+      , p
+        [ class "image-description" ]
+        [ text (imageDescription (currentPost model)) ]
 
       , div
         [ class "nav" ]
@@ -97,7 +120,7 @@ view address model =
 
         , span
           [ class "nav-position" ]
-          [ text (currentPost ++ " / " ++ totalPosts) ]
+          [ text (currentPosition ++ " / " ++ totalPosts) ]
 
         , button
           [ class "nav--next"
@@ -106,16 +129,6 @@ view address model =
           [ text "Next Post" ]
         ]
       ]
-
-currentImgUrl : Model -> String
-currentImgUrl model =
-  let currentPost =
-    Array.get model.position (Array.fromList model.posts)
-  in
-    case currentPost of
-      Just post -> post.source.url
-
-      Nothing -> "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
 
 
 imgStyle : String -> Attribute

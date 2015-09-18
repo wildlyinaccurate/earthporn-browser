@@ -294,22 +294,6 @@ Elm.Browser.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Task = Elm.Task.make(_elm);
-   var currentImgUrl = function (model) {
-      return function () {
-         var currentPost = A2($Array.get,
-         model.position,
-         $Array.fromList(model.posts));
-         return function () {
-            switch (currentPost.ctor)
-            {case "Just":
-               return currentPost._0.source.url;
-               case "Nothing":
-               return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";}
-            _U.badCase($moduleName,
-            "between lines 113 and 116");
-         }();
-      }();
-   };
    _op["=>"] = F2(function (v0,
    v1) {
       return {ctor: "_Tuple2"
@@ -363,7 +347,7 @@ Elm.Browser.make = function (_elm) {
                    model)
                    ,_1: $Effects.none};}
          _U.badCase($moduleName,
-         "between lines 52 and 66");
+         "between lines 73 and 87");
       }();
    });
    var LoadPosts = function (a) {
@@ -372,17 +356,47 @@ Elm.Browser.make = function (_elm) {
    };
    var NextPost = {ctor: "NextPost"};
    var PreviousPost = {ctor: "PreviousPost"};
+   var imageDescription = function (maybePost) {
+      return function () {
+         switch (maybePost.ctor)
+         {case "Just":
+            return maybePost._0.title;
+            case "Nothing":
+            return "Loading...";}
+         _U.badCase($moduleName,
+         "between lines 58 and 60");
+      }();
+   };
+   var imageUrl = function (maybePost) {
+      return function () {
+         switch (maybePost.ctor)
+         {case "Just":
+            return maybePost._0.source.url;
+            case "Nothing":
+            return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";}
+         _U.badCase($moduleName,
+         "between lines 51 and 53");
+      }();
+   };
+   var currentPost = function (model) {
+      return A2($Array.get,
+      model.position,
+      $Array.fromList(model.posts));
+   };
    var view = F2(function (address,
    model) {
       return function () {
          var totalPosts = $Basics.toString($List.length(model.posts));
-         var currentPost = $Basics.toString(model.position + 1);
+         var currentPosition = $Basics.toString(model.position + 1);
          return A2($Html.div,
          _L.fromArray([$Html$Attributes.$class("container")]),
          _L.fromArray([A2($Html.div,
-                      _L.fromArray([$Html$Attributes.$class("image--current")
-                                   ,imgStyle(currentImgUrl(model))]),
+                      _L.fromArray([$Html$Attributes.$class("image")
+                                   ,imgStyle(imageUrl(currentPost(model)))]),
                       _L.fromArray([]))
+                      ,A2($Html.p,
+                      _L.fromArray([$Html$Attributes.$class("image-description")]),
+                      _L.fromArray([$Html.text(imageDescription(currentPost(model)))]))
                       ,A2($Html.div,
                       _L.fromArray([$Html$Attributes.$class("nav")]),
                       _L.fromArray([A2($Html.button,
@@ -394,7 +408,7 @@ Elm.Browser.make = function (_elm) {
                                    ,A2($Html.span,
                                    _L.fromArray([$Html$Attributes.$class("nav-position")]),
                                    _L.fromArray([$Html.text(A2($Basics._op["++"],
-                                   currentPost,
+                                   currentPosition,
                                    A2($Basics._op["++"],
                                    " / ",
                                    totalPosts)))]))
@@ -470,12 +484,14 @@ Elm.Browser.make = function (_elm) {
                          ,Post: Post
                          ,Image: Image
                          ,init: init
+                         ,currentPost: currentPost
+                         ,imageUrl: imageUrl
+                         ,imageDescription: imageDescription
                          ,PreviousPost: PreviousPost
                          ,NextPost: NextPost
                          ,LoadPosts: LoadPosts
                          ,update: update
                          ,view: view
-                         ,currentImgUrl: currentImgUrl
                          ,imgStyle: imgStyle
                          ,getPosts: getPosts
                          ,redditDecoder: redditDecoder

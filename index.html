@@ -7,7 +7,7 @@
         html,
         body {
             background-color: #4f3c35;
-            color: #ffffff;
+            color: #fff;
             height: 100%;
             margin: 0;
             padding: 0;
@@ -25,14 +25,23 @@
             position: relative;
         }
 
-        .image--current {
+        .image {
             max-width: 100%;
         }
 
+        .image-description {
+            bottom: 0;
+        }
+
+        .image-description,
         .nav {
             position: absolute;
+            text-shadow: 1px 1px 1px #000;
+            width: 100%
+        }
+
+        .nav {
             top: 0;
-            width: 100%;
         }
     </style>
 </head>
