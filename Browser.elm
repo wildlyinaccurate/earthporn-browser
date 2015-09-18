@@ -2,7 +2,7 @@ module Browser where
 
 import Http
 import Html exposing (..)
-import Html.Attributes exposing (style)
+import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Json.Decode as Json exposing ((:=))
 import Task
@@ -73,35 +73,56 @@ update action model =
 
 view : Signal.Address Action -> Model -> Html
 view address model =
-  div []
-    [ button [ onClick address PreviousPost ] [ text "<" ]
-    , text ("Current position: " ++ (toString (model.position)))
-    , text (" | Total posts: " ++ (toString (List.length (model.posts))))
-    , div [ imgStyle (currentImg model) ] []
-    , button [ onClick address NextPost ] [ text ">" ]
-    ]
+  let currentPost = toString (model.position + 1)
+      totalPosts = toString (List.length (model.posts))
+  in
+    div
+      [ class "container" ]
+      [ div
+        [ class "image--current"
+        , imgStyle (currentImgUrl model)
+        ]
+        []
 
+      , div
+        [ class "nav" ]
+        [
+          button
+          [ class "nav--prev"
+          , onClick address PreviousPost
+          ]
+          [ text "Previous Post" ]
 
-currentImg : Model -> String
-currentImg model =
+        , span
+          [ class "nav-position" ]
+          [ text (currentPost ++ " / " ++ totalPosts) ]
+
+        , button
+          [ class "nav--next"
+          , onClick address NextPost
+          ]
+          [ text "Next Post" ]
+        ]
+      ]
+
+currentImgUrl : Model -> String
+currentImgUrl model =
   let currentPost =
     Array.get model.position (Array.fromList model.posts)
   in
     case currentPost of
       Just post -> post.source.url
 
-      Nothing -> "http://www.redditstatic.com/reddit404c.png"
+      Nothing -> "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
 
 
 imgStyle : String -> Attribute
 imgStyle url =
   style
-    [ "display" => "inline-block"
-    , "width" => "200px"
-    , "height" => "200px"
-    , "background-position" => "center center"
-    , "background-size" => "cover"
-    , "background-image" => ("url('" ++ url ++ "')")
+    [ "background-image" => ("url('" ++ url ++ "')")
+    , "background-position" => "center"
+    , "background-repeat" => "no-repeat"
+    , "background-size" => "contain"
     ]
 
 

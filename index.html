@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EarthPorn Browser</title>
+
+    <style>
+        html,
+        body {
+            background-color: #4f3c35;
+            color: #ffffff;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        body > div,
+        .container,
+        .image--current {
+            height: 100%;
+        }
+
+        .container {
+            background: url('loading.gif') no-repeat center;
+            position: relative;
+        }
+
+        .image--current {
+            max-width: 100%;
+        }
+
+        .nav {
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <script src="elm.js"></script>
+    <script>Elm.fullscreen(Elm.Main)</script>
+</body>
+</html>
