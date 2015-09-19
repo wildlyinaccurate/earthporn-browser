@@ -283,6 +283,7 @@ Elm.Browser.make = function (_elm) {
    $moduleName = "Browser",
    $Array = Elm.Array.make(_elm),
    $Basics = Elm.Basics.make(_elm),
+   $Char = Elm.Char.make(_elm),
    $Effects = Elm.Effects.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
@@ -293,6 +294,7 @@ Elm.Browser.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm),
    $Task = Elm.Task.make(_elm);
    _op["=>"] = F2(function (v0,
    v1) {
@@ -401,7 +403,7 @@ Elm.Browser.make = function (_elm) {
                    model)
                    ,_1: $Effects.none};}
          _U.badCase($moduleName,
-         "between lines 77 and 120");
+         "between lines 84 and 127");
       }();
    });
    var imageDescription = function (maybePost) {
@@ -412,7 +414,7 @@ Elm.Browser.make = function (_elm) {
             case "Nothing":
             return "Loading...";}
          _U.badCase($moduleName,
-         "between lines 59 and 61");
+         "between lines 66 and 68");
       }();
    };
    var imageUrl = function (maybePost) {
@@ -423,7 +425,7 @@ Elm.Browser.make = function (_elm) {
             case "Nothing":
             return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";}
          _U.badCase($moduleName,
-         "between lines 52 and 54");
+         "between lines 59 and 61");
       }();
    };
    var currentPost = function (model) {
@@ -431,43 +433,6 @@ Elm.Browser.make = function (_elm) {
       model.position,
       $Array.fromList(model.posts));
    };
-   var view = F2(function (address,
-   model) {
-      return function () {
-         var totalPosts = $Basics.toString($List.length(model.posts));
-         var currentPosition = $Basics.toString(model.position + 1);
-         return A2($Html.div,
-         _L.fromArray([$Html$Attributes.$class("container")]),
-         _L.fromArray([A2($Html.div,
-                      _L.fromArray([$Html$Attributes.$class("image")
-                                   ,imgStyle(imageUrl(currentPost(model)))]),
-                      _L.fromArray([]))
-                      ,A2($Html.p,
-                      _L.fromArray([$Html$Attributes.$class("image-description")]),
-                      _L.fromArray([$Html.text(imageDescription(currentPost(model)))]))
-                      ,A2($Html.div,
-                      _L.fromArray([$Html$Attributes.$class("nav")]),
-                      _L.fromArray([A2($Html.button,
-                                   _L.fromArray([$Html$Attributes.$class("nav--prev")
-                                                ,A2($Html$Events.onClick,
-                                                address,
-                                                PreviousPost)]),
-                                   _L.fromArray([$Html.text("Previous Post")]))
-                                   ,A2($Html.span,
-                                   _L.fromArray([$Html$Attributes.$class("nav-position")]),
-                                   _L.fromArray([$Html.text(A2($Basics._op["++"],
-                                   currentPosition,
-                                   A2($Basics._op["++"],
-                                   " / ",
-                                   totalPosts)))]))
-                                   ,A2($Html.button,
-                                   _L.fromArray([$Html$Attributes.$class("nav--next")
-                                                ,A2($Html$Events.onClick,
-                                                address,
-                                                NextPost)]),
-                                   _L.fromArray([$Html.text("Next Post")]))]))]));
-      }();
-   });
    var Image = F3(function (a,
    b,
    c) {
@@ -527,7 +492,48 @@ Elm.Browser.make = function (_elm) {
               0,
               _L.fromArray([]))
               ,_1: getPosts};
+   var unicodeString = function ($) {
+      return $String.fromChar($Char.fromCode($));
+   };
+   var view = F2(function (address,
+   model) {
+      return function () {
+         var totalPosts = $Basics.toString($List.length(model.posts));
+         var currentPosition = $Basics.toString(model.position + 1);
+         return A2($Html.div,
+         _L.fromArray([$Html$Attributes.$class("container")]),
+         _L.fromArray([A2($Html.div,
+                      _L.fromArray([$Html$Attributes.$class("image")
+                                   ,imgStyle(imageUrl(currentPost(model)))]),
+                      _L.fromArray([]))
+                      ,A2($Html.p,
+                      _L.fromArray([$Html$Attributes.$class("image-description")]),
+                      _L.fromArray([$Html.text(imageDescription(currentPost(model)))]))
+                      ,A2($Html.a,
+                      _L.fromArray([$Html$Attributes.$class("btn btn--prev")
+                                   ,$Html$Attributes.href("#")
+                                   ,A2($Html$Events.onClick,
+                                   address,
+                                   PreviousPost)]),
+                      _L.fromArray([$Html.text(unicodeString(8249))]))
+                      ,A2($Html.span,
+                      _L.fromArray([$Html$Attributes.$class("position")]),
+                      _L.fromArray([$Html.text(A2($Basics._op["++"],
+                      currentPosition,
+                      A2($Basics._op["++"],
+                      " / ",
+                      totalPosts)))]))
+                      ,A2($Html.a,
+                      _L.fromArray([$Html$Attributes.$class("btn btn--next")
+                                   ,$Html$Attributes.href("#")
+                                   ,A2($Html$Events.onClick,
+                                   address,
+                                   NextPost)]),
+                      _L.fromArray([$Html.text(unicodeString(8250))]))]));
+      }();
+   });
    _elm.Browser.values = {_op: _op
+                         ,unicodeString: unicodeString
                          ,Model: Model
                          ,Post: Post
                          ,Image: Image

@@ -1,16 +1,23 @@
 module Browser where
 
 import Array
+import Char
 import Json.Decode as Json exposing ((:=))
 import List exposing (length)
 import Signal exposing (Signal)
+import String
 import Task
 
 import Effects exposing (Effects)
 import Html exposing (..)
-import Html.Attributes exposing (class, style)
+import Html.Attributes exposing (class, href, style)
 import Html.Events exposing (onClick)
 import Http
+
+
+unicodeString : Int -> String
+unicodeString =
+  Char.fromCode >> String.fromChar
 
 
 -- MODEL
@@ -142,25 +149,23 @@ view address model =
         [ class "image-description" ]
         [ text (imageDescription (currentPost model)) ]
 
-      , div
-        [ class "nav" ]
-        [
-          button
-          [ class "nav--prev"
-          , onClick address PreviousPost
-          ]
-          [ text "Previous Post" ]
-
-        , span
-          [ class "nav-position" ]
-          [ text (currentPosition ++ " / " ++ totalPosts) ]
-
-        , button
-          [ class "nav--next"
-          , onClick address NextPost
-          ]
-          [ text "Next Post" ]
+      , a
+        [ class "btn btn--prev"
+        , href "#"
+        , onClick address PreviousPost
         ]
+        [ text (unicodeString 8249) ]
+
+      , span
+        [ class "position" ]
+        [ text (currentPosition ++ " / " ++ totalPosts) ]
+
+      , a
+        [ class "btn btn--next"
+        , href "#"
+        , onClick address NextPost
+        ]
+        [ text (unicodeString 8250) ]
       ]
 
 
