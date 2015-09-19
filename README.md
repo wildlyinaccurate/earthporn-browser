@@ -1,6 +1,18 @@
-I wanted an interface for browsing through images from [r/earthporn](https://www.reddit.com/r/earthporn). This is it.
+I wanted a simple, gallery-esque interface for browsing through images from [r/earthporn](https://www.reddit.com/r/earthporn). This is it.
 
-Still a work in progress; build/view it with `elm-reactor`. Or see the [live demo](https://wildlyinaccurate.com/earthporn-browser/).
+You can build this with [Elm](http://elm-lang.org/install) (see instructions below) or view the [live demo](https://wildlyinaccurate.com/earthporn-browser/).
+
+## Building Locally
+
+Clone this repository and build `Main.elm`.
+
+```
+$ git clone https://github.com/wildlyinaccurate/earthporn-browser.git
+$ cd earthporn-browser
+$ elm-make Main.elm
+```
+
+Then open `index.html`.
 
 # LICENSE
 
