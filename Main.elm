@@ -1,5 +1,7 @@
-import Effects exposing (Never)
 import Browser exposing (init, update, view)
+import Effects exposing (Never)
+import Keyboard
+import Signal exposing ((<~))
 import StartApp
 import Task
 
@@ -9,7 +11,7 @@ app =
     { init = init
     , update = update
     , view = view
-    , inputs = []
+    , inputs = [ Browser.KeyPress <~ Keyboard.arrows ]
     }
 
 

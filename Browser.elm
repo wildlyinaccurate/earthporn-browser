@@ -3,6 +3,7 @@ module Browser where
 import Array
 import Json.Decode as Json exposing ((:=))
 import List exposing (length)
+import Signal exposing (Signal)
 import Task
 
 import Effects exposing (Effects)
@@ -65,6 +66,9 @@ imageDescription maybePost =
 type Action
   = PreviousPost
   | NextPost
+  | FirstPost
+  | LastPost
+  | KeyPress ({ x : Int, y : Int })
   | LoadPosts (Maybe (List Post))
 
 
@@ -81,10 +85,39 @@ update action model =
         , Effects.none
         )
 
+    FirstPost ->
+        ( { model | position <- 0 }
+        , Effects.none
+        )
+
+    LastPost ->
+        ( { model | position <- (length model.posts) - 1 }
+        , Effects.none
+        )
+
     LoadPosts maybePosts ->
         ( { model | posts <- (Maybe.withDefault model.posts maybePosts) }
         , Effects.none
         )
+
+    KeyPress keys ->
+      case (keys.x, keys.y) of
+        (-1, 0) ->
+          update PreviousPost model
+
+        (1, 0) ->
+          update NextPost model
+
+        (0, 1) ->
+          update FirstPost model
+
+        (0, -1) ->
+          update LastPost model
+
+        otherwise ->
+          ( model
+          , Effects.none
+          )
 
 
 -- VIEW

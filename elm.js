@@ -318,11 +318,65 @@ Elm.Browser.make = function (_elm) {
                                                  "background-size",
                                                  "contain")]));
    };
+   var LoadPosts = function (a) {
+      return {ctor: "LoadPosts"
+             ,_0: a};
+   };
+   var KeyPress = function (a) {
+      return {ctor: "KeyPress"
+             ,_0: a};
+   };
+   var LastPost = {ctor: "LastPost"};
+   var FirstPost = {ctor: "FirstPost"};
+   var NextPost = {ctor: "NextPost"};
+   var PreviousPost = {ctor: "PreviousPost"};
    var update = F2(function (action,
    model) {
       return function () {
          switch (action.ctor)
-         {case "LoadPosts":
+         {case "FirstPost":
+            return {ctor: "_Tuple2"
+                   ,_0: _U.replace([["position"
+                                    ,0]],
+                   model)
+                   ,_1: $Effects.none};
+            case "KeyPress":
+            return function () {
+                 var _v3 = {ctor: "_Tuple2"
+                           ,_0: action._0.x
+                           ,_1: action._0.y};
+                 switch (_v3.ctor)
+                 {case "_Tuple2": switch (_v3._0)
+                      {case -1: switch (_v3._1)
+                           {case 0: return A2(update,
+                                PreviousPost,
+                                model);}
+                           break;
+                         case 0: switch (_v3._1)
+                           {case -1: return A2(update,
+                                LastPost,
+                                model);
+                              case 1: return A2(update,
+                                FirstPost,
+                                model);}
+                           break;
+                         case 1: switch (_v3._1)
+                           {case 0: return A2(update,
+                                NextPost,
+                                model);}
+                           break;}
+                      break;}
+                 return {ctor: "_Tuple2"
+                        ,_0: model
+                        ,_1: $Effects.none};
+              }();
+            case "LastPost":
+            return {ctor: "_Tuple2"
+                   ,_0: _U.replace([["position"
+                                    ,$List.length(model.posts) - 1]],
+                   model)
+                   ,_1: $Effects.none};
+            case "LoadPosts":
             return {ctor: "_Tuple2"
                    ,_0: _U.replace([["posts"
                                     ,A2($Maybe.withDefault,
@@ -347,15 +401,9 @@ Elm.Browser.make = function (_elm) {
                    model)
                    ,_1: $Effects.none};}
          _U.badCase($moduleName,
-         "between lines 73 and 87");
+         "between lines 77 and 120");
       }();
    });
-   var LoadPosts = function (a) {
-      return {ctor: "LoadPosts"
-             ,_0: a};
-   };
-   var NextPost = {ctor: "NextPost"};
-   var PreviousPost = {ctor: "PreviousPost"};
    var imageDescription = function (maybePost) {
       return function () {
          switch (maybePost.ctor)
@@ -364,7 +412,7 @@ Elm.Browser.make = function (_elm) {
             case "Nothing":
             return "Loading...";}
          _U.badCase($moduleName,
-         "between lines 58 and 60");
+         "between lines 59 and 61");
       }();
    };
    var imageUrl = function (maybePost) {
@@ -375,7 +423,7 @@ Elm.Browser.make = function (_elm) {
             case "Nothing":
             return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";}
          _U.badCase($moduleName,
-         "between lines 51 and 53");
+         "between lines 52 and 54");
       }();
    };
    var currentPost = function (model) {
@@ -489,6 +537,9 @@ Elm.Browser.make = function (_elm) {
                          ,imageDescription: imageDescription
                          ,PreviousPost: PreviousPost
                          ,NextPost: NextPost
+                         ,FirstPost: FirstPost
+                         ,LastPost: LastPost
+                         ,KeyPress: KeyPress
                          ,LoadPosts: LoadPosts
                          ,update: update
                          ,view: view
@@ -4457,6 +4508,170 @@ Elm.Json.Encode.make = function (_elm) {
                              ,Value: Value};
    return _elm.Json.Encode.values;
 };
+Elm.Keyboard = Elm.Keyboard || {};
+Elm.Keyboard.make = function (_elm) {
+   "use strict";
+   _elm.Keyboard = _elm.Keyboard || {};
+   if (_elm.Keyboard.values)
+   return _elm.Keyboard.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Keyboard",
+   $Basics = Elm.Basics.make(_elm),
+   $Native$Keyboard = Elm.Native.Keyboard.make(_elm),
+   $Set = Elm.Set.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var presses = A2($Signal.map,
+   function (_) {
+      return _.keyCode;
+   },
+   $Native$Keyboard.presses);
+   var toXY = F2(function (_v0,
+   keyCodes) {
+      return function () {
+         return function () {
+            var is = function (keyCode) {
+               return A2($Set.member,
+               keyCode,
+               keyCodes) ? 1 : 0;
+            };
+            return {_: {}
+                   ,x: is(_v0.right) - is(_v0.left)
+                   ,y: is(_v0.up) - is(_v0.down)};
+         }();
+      }();
+   });
+   var Directions = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,down: b
+             ,left: c
+             ,right: d
+             ,up: a};
+   });
+   var dropMap = F2(function (f,
+   signal) {
+      return $Signal.dropRepeats(A2($Signal.map,
+      f,
+      signal));
+   });
+   var EventInfo = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,alt: a
+             ,keyCode: c
+             ,meta: b};
+   });
+   var Blur = {ctor: "Blur"};
+   var Down = function (a) {
+      return {ctor: "Down",_0: a};
+   };
+   var Up = function (a) {
+      return {ctor: "Up",_0: a};
+   };
+   var rawEvents = $Signal.mergeMany(_L.fromArray([A2($Signal.map,
+                                                  Up,
+                                                  $Native$Keyboard.ups)
+                                                  ,A2($Signal.map,
+                                                  Down,
+                                                  $Native$Keyboard.downs)
+                                                  ,A2($Signal.map,
+                                                  $Basics.always(Blur),
+                                                  $Native$Keyboard.blurs)]));
+   var empty = {_: {}
+               ,alt: false
+               ,keyCodes: $Set.empty
+               ,meta: false};
+   var update = F2(function (event,
+   model) {
+      return function () {
+         switch (event.ctor)
+         {case "Blur": return empty;
+            case "Down": return {_: {}
+                                ,alt: event._0.alt
+                                ,keyCodes: A2($Set.insert,
+                                event._0.keyCode,
+                                model.keyCodes)
+                                ,meta: event._0.meta};
+            case "Up": return {_: {}
+                              ,alt: event._0.alt
+                              ,keyCodes: A2($Set.remove,
+                              event._0.keyCode,
+                              model.keyCodes)
+                              ,meta: event._0.meta};}
+         _U.badCase($moduleName,
+         "between lines 68 and 82");
+      }();
+   });
+   var model = A3($Signal.foldp,
+   update,
+   empty,
+   rawEvents);
+   var alt = A2(dropMap,
+   function (_) {
+      return _.alt;
+   },
+   model);
+   var meta = A2(dropMap,
+   function (_) {
+      return _.meta;
+   },
+   model);
+   var keysDown = A2(dropMap,
+   function (_) {
+      return _.keyCodes;
+   },
+   model);
+   var arrows = A2(dropMap,
+   toXY({_: {}
+        ,down: 40
+        ,left: 37
+        ,right: 39
+        ,up: 38}),
+   keysDown);
+   var wasd = A2(dropMap,
+   toXY({_: {}
+        ,down: 83
+        ,left: 65
+        ,right: 68
+        ,up: 87}),
+   keysDown);
+   var isDown = function (keyCode) {
+      return A2(dropMap,
+      $Set.member(keyCode),
+      keysDown);
+   };
+   var ctrl = isDown(17);
+   var shift = isDown(16);
+   var space = isDown(32);
+   var enter = isDown(13);
+   var Model = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,alt: a
+             ,keyCodes: c
+             ,meta: b};
+   });
+   _elm.Keyboard.values = {_op: _op
+                          ,arrows: arrows
+                          ,wasd: wasd
+                          ,enter: enter
+                          ,space: space
+                          ,ctrl: ctrl
+                          ,shift: shift
+                          ,alt: alt
+                          ,meta: meta
+                          ,isDown: isDown
+                          ,keysDown: keysDown
+                          ,presses: presses};
+   return _elm.Keyboard.values;
+};
 Elm.List = Elm.List || {};
 Elm.List.make = function (_elm) {
    "use strict";
@@ -4826,6 +5041,7 @@ Elm.Main.make = function (_elm) {
    $Basics = Elm.Basics.make(_elm),
    $Browser = Elm.Browser.make(_elm),
    $Effects = Elm.Effects.make(_elm),
+   $Keyboard = Elm.Keyboard.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
@@ -4834,7 +5050,9 @@ Elm.Main.make = function (_elm) {
    $Task = Elm.Task.make(_elm);
    var app = $StartApp.start({_: {}
                              ,init: $Browser.init
-                             ,inputs: _L.fromArray([])
+                             ,inputs: _L.fromArray([A2($Signal._op["<~"],
+                             $Browser.KeyPress,
+                             $Keyboard.arrows)])
                              ,update: $Browser.update
                              ,view: $Browser.view});
    var main = app.html;
@@ -8236,6 +8454,56 @@ Elm.Native.Json.make = function(localRuntime) {
 		encodeList: List.toArray,
 		encodeObject: encodeObject
 
+	};
+
+};
+
+Elm.Native.Keyboard = {};
+Elm.Native.Keyboard.make = function(localRuntime) {
+
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Keyboard = localRuntime.Native.Keyboard || {};
+	if (localRuntime.Native.Keyboard.values)
+	{
+		return localRuntime.Native.Keyboard.values;
+	}
+
+	var NS = Elm.Native.Signal.make(localRuntime);
+
+
+	function keyEvent(event)
+	{
+		return {
+			_: {},
+			alt: event.altKey,
+			meta: event.metaKey,
+			keyCode: event.keyCode
+		};
+	}
+
+
+	function keyStream(node, eventName, handler)
+	{
+		var stream = NS.input(eventName, '\0');
+
+		localRuntime.addListener([stream.id], node, eventName, function(e) {
+			localRuntime.notify(stream.id, handler(e));
+		});
+
+		return stream;
+	}
+
+	var downs = keyStream(document, 'keydown', keyEvent);
+	var ups = keyStream(document, 'keyup', keyEvent);
+	var presses = keyStream(document, 'keypress', keyEvent);
+	var blurs = keyStream(window, 'blur', function() { return null; });
+
+
+	return localRuntime.Native.Keyboard.values = {
+		downs: downs,
+		ups: ups,
+		blurs: blurs,
+		presses: presses
 	};
 
 };
@@ -13109,6 +13377,111 @@ Elm.Result.make = function (_elm) {
                         ,Ok: Ok
                         ,Err: Err};
    return _elm.Result.values;
+};
+Elm.Set = Elm.Set || {};
+Elm.Set.make = function (_elm) {
+   "use strict";
+   _elm.Set = _elm.Set || {};
+   if (_elm.Set.values)
+   return _elm.Set.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Set",
+   $Dict = Elm.Dict.make(_elm),
+   $List = Elm.List.make(_elm);
+   var partition = F2(function (p,
+   set) {
+      return A2($Dict.partition,
+      F2(function (k,_v0) {
+         return function () {
+            return p(k);
+         }();
+      }),
+      set);
+   });
+   var filter = F2(function (p,
+   set) {
+      return A2($Dict.filter,
+      F2(function (k,_v2) {
+         return function () {
+            return p(k);
+         }();
+      }),
+      set);
+   });
+   var foldr = F3(function (f,
+   b,
+   s) {
+      return A3($Dict.foldr,
+      F3(function (k,_v4,b) {
+         return function () {
+            return A2(f,k,b);
+         }();
+      }),
+      b,
+      s);
+   });
+   var foldl = F3(function (f,
+   b,
+   s) {
+      return A3($Dict.foldl,
+      F3(function (k,_v6,b) {
+         return function () {
+            return A2(f,k,b);
+         }();
+      }),
+      b,
+      s);
+   });
+   var toList = $Dict.keys;
+   var diff = $Dict.diff;
+   var intersect = $Dict.intersect;
+   var union = $Dict.union;
+   var member = $Dict.member;
+   var isEmpty = $Dict.isEmpty;
+   var remove = $Dict.remove;
+   var insert = function (k) {
+      return A2($Dict.insert,
+      k,
+      {ctor: "_Tuple0"});
+   };
+   var singleton = function (k) {
+      return A2($Dict.singleton,
+      k,
+      {ctor: "_Tuple0"});
+   };
+   var empty = $Dict.empty;
+   var fromList = function (xs) {
+      return A3($List.foldl,
+      insert,
+      empty,
+      xs);
+   };
+   var map = F2(function (f,s) {
+      return fromList(A2($List.map,
+      f,
+      toList(s)));
+   });
+   _elm.Set.values = {_op: _op
+                     ,empty: empty
+                     ,singleton: singleton
+                     ,insert: insert
+                     ,remove: remove
+                     ,isEmpty: isEmpty
+                     ,member: member
+                     ,foldl: foldl
+                     ,foldr: foldr
+                     ,map: map
+                     ,filter: filter
+                     ,partition: partition
+                     ,union: union
+                     ,intersect: intersect
+                     ,diff: diff
+                     ,toList: toList
+                     ,fromList: fromList};
+   return _elm.Set.values;
 };
 Elm.Signal = Elm.Signal || {};
 Elm.Signal.make = function (_elm) {
