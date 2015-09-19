@@ -1,3 +1,5 @@
+# EarthPorn Browser
+
 I wanted a simple, gallery-esque interface for browsing through images from [r/earthporn](https://www.reddit.com/r/earthporn). This is what I've come up with.
 
 Navigating through posts can be done in a few different ways:
