@@ -1,4 +1,10 @@
-I wanted a simple, gallery-esque interface for browsing through images from [r/earthporn](https://www.reddit.com/r/earthporn). This is it.
+I wanted a simple, gallery-esque interface for browsing through images from [r/earthporn](https://www.reddit.com/r/earthporn). This is what I've come up with.
+
+Navigating through posts can be done in a few different ways:
+
+ * Tapping or clicking the left and right sides of the page
+ * Using the left and right arrows on a keyboard
+ * Swiping left or right (still in progress)
 
 You can build this with [Elm](http://elm-lang.org/install) (see instructions below) or view the [live demo](https://wildlyinaccurate.com/earthporn-browser/).
 
