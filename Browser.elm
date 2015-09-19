@@ -64,6 +64,16 @@ imageDescription maybePost =
     Nothing -> "Loading..."
 
 
+previousPosition : Model -> Int
+previousPosition model =
+  max 0 (model.position - 1)
+
+
+nextPosition : Model -> Int
+nextPosition model =
+  min ((length model.posts) - 1) (model.position + 1)
+
+
 -- UPDATE
 
 type Action
@@ -80,12 +90,12 @@ update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
     PreviousPost ->
-        ( { model | position <- max 0 (model.position - 1) }
+        ( { model | position <- previousPosition model }
         , Effects.none
         )
 
     NextPost ->
-        ( { model | position <- min (length model.posts) (model.position + 1) }
+        ( { model | position <- nextPosition model }
         , Effects.none
         )
 
@@ -103,6 +113,11 @@ update action model =
         ( { model | posts <- (Maybe.withDefault model.posts maybePosts) }
         , Effects.none
         )
+
+    Touch touches ->
+      ( model
+      , Effects.none
+      )
 
     KeyPress keys ->
       case (keys.x, keys.y) of

@@ -334,6 +334,16 @@ Elm.Browser.make = function (_elm) {
    var FirstPost = {ctor: "FirstPost"};
    var NextPost = {ctor: "NextPost"};
    var PreviousPost = {ctor: "PreviousPost"};
+   var nextPosition = function (model) {
+      return A2($Basics.min,
+      $List.length(model.posts) - 1,
+      model.position + 1);
+   };
+   var previousPosition = function (model) {
+      return A2($Basics.max,
+      0,
+      model.position - 1);
+   };
    var update = F2(function (action,
    model) {
       return function () {
@@ -346,17 +356,17 @@ Elm.Browser.make = function (_elm) {
                    ,_1: $Effects.none};
             case "KeyPress":
             return function () {
-                 var _v3 = {ctor: "_Tuple2"
+                 var _v4 = {ctor: "_Tuple2"
                            ,_0: action._0.x
                            ,_1: action._0.y};
-                 switch (_v3.ctor)
-                 {case "_Tuple2": switch (_v3._0)
-                      {case -1: switch (_v3._1)
+                 switch (_v4.ctor)
+                 {case "_Tuple2": switch (_v4._0)
+                      {case -1: switch (_v4._1)
                            {case 0: return A2(update,
                                 PreviousPost,
                                 model);}
                            break;
-                         case 0: switch (_v3._1)
+                         case 0: switch (_v4._1)
                            {case -1: return A2(update,
                                 LastPost,
                                 model);
@@ -364,7 +374,7 @@ Elm.Browser.make = function (_elm) {
                                 FirstPost,
                                 model);}
                            break;
-                         case 1: switch (_v3._1)
+                         case 1: switch (_v4._1)
                            {case 0: return A2(update,
                                 NextPost,
                                 model);}
@@ -391,21 +401,21 @@ Elm.Browser.make = function (_elm) {
             case "NextPost":
             return {ctor: "_Tuple2"
                    ,_0: _U.replace([["position"
-                                    ,A2($Basics.min,
-                                    $List.length(model.posts),
-                                    model.position + 1)]],
+                                    ,nextPosition(model)]],
                    model)
                    ,_1: $Effects.none};
             case "PreviousPost":
             return {ctor: "_Tuple2"
                    ,_0: _U.replace([["position"
-                                    ,A2($Basics.max,
-                                    0,
-                                    model.position - 1)]],
+                                    ,previousPosition(model)]],
                    model)
+                   ,_1: $Effects.none};
+            case "Touch":
+            return {ctor: "_Tuple2"
+                   ,_0: model
                    ,_1: $Effects.none};}
          _U.badCase($moduleName,
-         "between lines 81 and 124");
+         "between lines 91 and 139");
       }();
    });
    var imageDescription = function (maybePost) {
@@ -539,6 +549,8 @@ Elm.Browser.make = function (_elm) {
                          ,currentPost: currentPost
                          ,imageUrl: imageUrl
                          ,imageDescription: imageDescription
+                         ,previousPosition: previousPosition
+                         ,nextPosition: nextPosition
                          ,PreviousPost: PreviousPost
                          ,NextPost: NextPost
                          ,FirstPost: FirstPost
