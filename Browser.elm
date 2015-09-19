@@ -15,11 +15,6 @@ import Html.Events exposing (onClick)
 import Http
 
 
-unicodeString : Int -> String
-unicodeString =
-  Char.fromCode >> String.fromChar
-
-
 -- MODEL
 
 type alias Model =
@@ -143,7 +138,7 @@ view address model =
         [ class "image"
         , imgStyle (imageUrl (currentPost model))
         ]
-        []
+        [ ]
 
       , p
         [ class "image-description" ]
@@ -154,7 +149,7 @@ view address model =
         , href "#"
         , onClick address PreviousPost
         ]
-        [ text (unicodeString 8249) ]
+        [ ]
 
       , span
         [ class "position" ]
@@ -165,7 +160,7 @@ view address model =
         , href "#"
         , onClick address NextPost
         ]
-        [ text (unicodeString 8250) ]
+        [ ]
       ]
 
 

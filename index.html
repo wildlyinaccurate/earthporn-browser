@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
     <title>EarthPorn Browser</title>
 
     <style>
@@ -37,6 +38,7 @@
         .image-description,
         .position {
             opacity: 0.7;
+            position: absolute;
             text-shadow: 1px 1px 1px #000;
         }
 
@@ -55,10 +57,9 @@
             color: #fff;
             font-size: 16em;
             height: 100%;
-            line-height: 1em;
+            line-height: 0;
             opacity: 0.1;
             outline: none;
-            padding-top: 30%;
             text-decoration: none;
             top: 0;
             width: 33%;
@@ -68,16 +69,31 @@
             opacity: 1;
         }
 
-        .btn--prev {
+        .btn--prev,
+        .btn--prev::after {
             left: 0;
-            padding-left: 32px;
             text-align: left;
         }
 
-        .btn--next {
+        .btn--next,
+        .btn--next::after {
             right: 0;
-            padding-right: 32px;
             text-align: right;
+        }
+
+        .btn--prev::after,
+        .btn--next::after {
+            padding: 0 32px;
+            position: absolute;
+            top: 45%;
+        }
+
+        .btn--prev::after {
+            content: "‹";
+        }
+
+        .btn--next::after {
+            content: "›";
         }
     </style>
 </head>
