@@ -7,6 +7,7 @@ import List exposing (length)
 import Signal exposing (Signal)
 import String
 import Task
+import Touch exposing (Touch)
 
 import Effects exposing (Effects)
 import Html exposing (..)
@@ -71,6 +72,7 @@ type Action
   | FirstPost
   | LastPost
   | KeyPress ({ x : Int, y : Int })
+  | Touch (List Touch)
   | LoadPosts (Maybe (List Post))
 
 

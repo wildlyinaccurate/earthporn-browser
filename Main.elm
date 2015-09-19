@@ -4,6 +4,7 @@ import Keyboard
 import Signal exposing ((<~))
 import StartApp
 import Task
+import Touch
 
 
 app =
@@ -11,7 +12,10 @@ app =
     { init = init
     , update = update
     , view = view
-    , inputs = [ Browser.KeyPress <~ Keyboard.arrows ]
+    , inputs =
+      [ Browser.KeyPress <~ Keyboard.arrows
+      , Browser.Touch <~ Touch.touches
+      ]
     }
 
 
