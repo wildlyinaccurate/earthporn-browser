@@ -1,11 +1,9 @@
 module Browser where
 
 import Array
-import Char
 import Json.Decode as Json exposing ((:=))
 import List exposing (length)
 import Signal exposing (Signal)
-import String
 import Task
 import Touch exposing (Touch)
 
@@ -89,6 +87,11 @@ type Action
 update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
+    LoadPosts maybePosts ->
+        ( { model | posts <- (Maybe.withDefault model.posts maybePosts) }
+        , Effects.none
+        )
+
     PreviousPost ->
         ( { model | position <- previousPosition model }
         , Effects.none
@@ -106,11 +109,6 @@ update action model =
 
     LastPost ->
         ( { model | position <- (length model.posts) - 1 }
-        , Effects.none
-        )
-
-    LoadPosts maybePosts ->
-        ( { model | posts <- (Maybe.withDefault model.posts maybePosts) }
         , Effects.none
         )
 
