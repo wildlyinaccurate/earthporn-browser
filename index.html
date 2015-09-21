@@ -2,9 +2,15 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>EarthPorn Browser</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+
         html,
         body {
             background-color: #4f3c35;
@@ -53,9 +59,7 @@
         }
 
         .btn {
-            box-sizing: border-box;
             color: #fff;
-            cursor: pointer;
             font-size: 16em;
             height: 100%;
             line-height: 0;
@@ -121,6 +125,14 @@
 
     <script src="elm.js"></script>
     <script>Elm.fullscreen(Elm.Main)</script>
+
+    <script src="fastclick.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        FastClick.attach(document.body)
+      }, false)
+    </script>
+
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
