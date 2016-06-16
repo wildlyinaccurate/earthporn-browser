@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run elm && npm run uglify",
     "elm": "elm make Main.elm --warn --output earthporn-browser.js",
-    "uglify": "uglifyjs earthporn-browser.js --mangle --output earthporn-browser.js"
+    "uglify": "uglifyjs earthporn-browser.js --compress --mangle --output earthporn-browser.js"
   },
   "repository": {
     "type": "git",
