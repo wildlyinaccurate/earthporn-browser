@@ -17,7 +17,7 @@ Clone this repository and build `Main.elm`.
 ```
 $ git clone https://github.com/wildlyinaccurate/earthporn-browser.git
 $ cd earthporn-browser
-$ elm-make Main.elm
+$ elm make Main.elm --output earthporn-browser.js
 ```
 
 Then open `index.html`.
@@ -26,7 +26,7 @@ Then open `index.html`.
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Joseph Wynn
+Copyright (c) 2016 Joseph Wynn
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
