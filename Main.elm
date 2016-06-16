@@ -1,28 +1,13 @@
-import Browser exposing (init, update, view)
-import Effects exposing (Never)
-import Keyboard
-import Signal exposing ((<~))
-import StartApp
-import Task
-import Touch
+module Main exposing (..)
 
-
-app =
-  StartApp.start
-    { init = init
-    , update = update
-    , view = view
-    , inputs =
-      [ Browser.KeyPress <~ Keyboard.arrows
-      , Browser.Touch <~ Touch.touches
-      ]
-    }
+import Browser exposing (init, update, view, subscriptions)
+import Html.App as Html
 
 
 main =
-  app.html
-
-
-port tasks : Signal (Task.Task Never ())
-port tasks =
-  app.tasks
+    Html.program
+        { init = init
+        , update = update
+        , view = view
+        , subscriptions = subscriptions
+        }

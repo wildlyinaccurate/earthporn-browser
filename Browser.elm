@@ -1,20 +1,18 @@
-module Browser where
+module Browser exposing (..)
 
 import Array
-import Json.Decode as Json exposing ((:=))
-import List exposing (length)
-import Signal exposing (Signal)
-import Task
-import Touch exposing (Touch)
-
-import Effects exposing (Effects)
 import Html exposing (..)
 import Html.Attributes exposing (class, href, style)
 import Html.Events exposing (onClick)
 import Http
+import Json.Decode as Json exposing ((:=))
+import Keyboard exposing (KeyCode)
+import List exposing (length)
+import Task
 
 
 -- MODEL
+
 
 type alias Model =
     { position : Int
@@ -23,199 +21,258 @@ type alias Model =
 
 
 type alias Post =
-  { id : String
-  , title : String
-  , source : Image
-  }
+    { id : String
+    , title : String
+    , source : Image
+    }
 
 
 type alias Image =
-  { url : String
-  , width : Int
-  , height : Int
-  }
+    { url : String
+    , width : Int
+    , height : Int
+    }
 
 
-init : (Model, Effects Action)
+init : ( Model, Cmd Msg )
 init =
-  ( Model 0 []
-  , getPosts
-  )
+    ( Model 0 []
+    , getPosts
+    )
 
 
 currentPost : Model -> Maybe Post
 currentPost model =
-  Array.get model.position (Array.fromList model.posts)
+    Array.get model.position (Array.fromList model.posts)
 
 
 imageUrl : Maybe Post -> String
 imageUrl maybePost =
-  case maybePost of
-    Just post -> post.source.url
-    Nothing -> "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    case maybePost of
+        Just post ->
+            post.source.url
+
+        Nothing ->
+            "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
 
 
 imageDescription : Maybe Post -> String
 imageDescription maybePost =
-  case maybePost of
-    Just post -> post.title
-    Nothing -> "Loading..."
+    case maybePost of
+        Just post ->
+            post.title
+
+        Nothing ->
+            "Loading..."
 
 
 previousPosition : Model -> Int
 previousPosition model =
-  max 0 (model.position - 1)
+    max 0 (model.position - 1)
 
 
 nextPosition : Model -> Int
 nextPosition model =
-  min ((length model.posts) - 1) (model.position + 1)
+    min ((length model.posts) - 1) (model.position + 1)
+
 
 
 -- UPDATE
 
-type Action
-  = PreviousPost
-  | NextPost
-  | FirstPost
-  | LastPost
-  | KeyPress ({ x : Int, y : Int })
-  | Touch (List Touch)
-  | LoadPosts (Maybe (List Post))
+
+type Msg
+    = PreviousPost
+    | NextPost
+    | FirstPost
+    | LastPost
+    | KeyPress KeyCode
+    | LoadPostsSucceed (List Post)
+    | LoadPostsFail Http.Error
 
 
-update : Action -> Model -> (Model, Effects Action)
-update action model =
-  case action of
-    LoadPosts maybePosts ->
-        ( { model | posts <- (Maybe.withDefault model.posts maybePosts) }
-        , Effects.none
-        )
+type ArrowKey
+    = UpArrow
+    | DownArrow
+    | LeftArrow
+    | RightArrow
 
-    PreviousPost ->
-        ( { model | position <- previousPosition model }
-        , Effects.none
-        )
 
-    NextPost ->
-        ( { model | position <- nextPosition model }
-        , Effects.none
-        )
+update : Msg -> Model -> ( Model, Cmd Msg )
+update message model =
+    case message of
+        LoadPostsSucceed posts ->
+            ( { model | posts = posts }
+            , Cmd.none
+            )
 
-    FirstPost ->
-        ( { model | position <- 0 }
-        , Effects.none
-        )
+        LoadPostsFail _ ->
+            ( model, Cmd.none )
 
-    LastPost ->
-        ( { model | position <- (length model.posts) - 1 }
-        , Effects.none
-        )
+        PreviousPost ->
+            ( { model | position = previousPosition model }
+            , Cmd.none
+            )
 
-    Touch touches ->
-      ( model
-      , Effects.none
-      )
+        NextPost ->
+            ( { model | position = nextPosition model }
+            , Cmd.none
+            )
 
-    KeyPress keys ->
-      case (keys.x, keys.y) of
-        (-1, 0) ->
-          update PreviousPost model
+        FirstPost ->
+            ( { model | position = 0 }
+            , Cmd.none
+            )
 
-        (1, 0) ->
-          update NextPost model
+        LastPost ->
+            ( { model | position = (length model.posts) - 1 }
+            , Cmd.none
+            )
 
-        (0, 1) ->
-          update FirstPost model
+        KeyPress code ->
+            case arrowKey code of
+                Just LeftArrow ->
+                    update PreviousPost model
 
-        (0, -1) ->
-          update LastPost model
+                Just RightArrow ->
+                    update NextPost model
+
+                Just DownArrow ->
+                    update FirstPost model
+
+                Just UpArrow ->
+                    update LastPost model
+
+                Nothing ->
+                    ( model
+                    , Cmd.none
+                    )
+
+
+arrowKey : KeyCode -> Maybe ArrowKey
+arrowKey code =
+    case code of
+        38 ->
+            Just UpArrow
+
+        40 ->
+            Just DownArrow
+
+        37 ->
+            Just LeftArrow
+
+        39 ->
+            Just RightArrow
 
         otherwise ->
-          ( model
-          , Effects.none
-          )
+            Nothing
+
 
 
 -- VIEW
 
-(=>) = (,)
+
+(=>) =
+    (,)
 
 
-view : Signal.Address Action -> Model -> Html
-view address model =
-  let currentPosition = toString (model.position + 1)
-      totalPosts = toString (length (model.posts))
-  in
-    div
-      [ class "container" ]
-      [ div
-        [ class "image"
-        , imgStyle (imageUrl (currentPost model))
-        ]
-        [ ]
+view : Model -> Html Msg
+view model =
+    let
+        currentPosition =
+            toString (model.position + 1)
 
-      , p
-        [ class "image-description" ]
-        [ text (imageDescription (currentPost model)) ]
-
-      , a
-        [ class "btn btn--prev"
-        , href "#"
-        , onClick address PreviousPost
-        ]
-        [ ]
-
-      , span
-        [ class "position" ]
-        [ text (currentPosition ++ " / " ++ totalPosts) ]
-
-      , a
-        [ class "btn btn--next"
-        , href "#"
-        , onClick address NextPost
-        ]
-        [ ]
-      ]
+        totalPosts =
+            toString (length (model.posts))
+    in
+        div [ class "container" ]
+            [ div
+                [ class "image"
+                , imgStyle (imageUrl (currentPost model))
+                ]
+                []
+            , p [ class "image-description" ]
+                [ text (imageDescription (currentPost model)) ]
+            , a
+                [ class "btn btn--prev"
+                , href "#"
+                , onClick PreviousPost
+                ]
+                []
+            , span [ class "position" ]
+                [ text (currentPosition ++ " / " ++ totalPosts) ]
+            , a
+                [ class "btn btn--next"
+                , href "#"
+                , onClick NextPost
+                ]
+                []
+            ]
 
 
-imgStyle : String -> Attribute
+currentImgUrl : Model -> String
+currentImgUrl model =
+    let
+        currentPost =
+            Array.get model.position (Array.fromList model.posts)
+    in
+        case currentPost of
+            Just post ->
+                post.source.url
+
+            Nothing ->
+                "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+
+
+imgStyle : String -> Attribute msg
 imgStyle url =
-  style
-    [ "background-image" => ("url('" ++ url ++ "')")
-    , "background-position" => "center"
-    , "background-repeat" => "no-repeat"
-    , "background-size" => "contain"
-    ]
+    style
+        [ "background-image" => ("url('" ++ url ++ "')")
+        , "background-position" => "center"
+        , "background-repeat" => "no-repeat"
+        , "background-size" => "contain"
+        ]
 
 
--- EFFECTS
 
-getPosts : Effects Action
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Keyboard.ups KeyPress
+
+
+
+-- HTTP
+
+
+getPosts : Cmd Msg
 getPosts =
-  Http.get redditDecoder "https://api.reddit.com/r/earthporn/hot"
-    |> Task.toMaybe
-    |> Task.map LoadPosts
-    |> Effects.task
+    let
+        url =
+            "https://api.reddit.com/r/earthporn/hot"
+    in
+        Task.perform LoadPostsFail LoadPostsSucceed (Http.get redditDecoder url)
 
 
 redditDecoder : Json.Decoder (List Post)
 redditDecoder =
-  Json.at ["data", "children"] (Json.list postDecoder)
+    Json.at [ "data", "children" ] (Json.list postDecoder)
 
 
 postDecoder : Json.Decoder Post
 postDecoder =
-  Json.object3 Post
-    (Json.at ["data", "id"] Json.string)
-    (Json.at ["data", "title"] Json.string)
-    (Json.at ["data", "preview", "images"] (Json.tuple1 identity imageDecoder))
+    Json.object3 Post
+        (Json.at [ "data", "id" ] Json.string)
+        (Json.at [ "data", "title" ] Json.string)
+        (Json.at [ "data", "preview", "images" ] (Json.tuple1 identity imageDecoder))
 
 
 imageDecoder : Json.Decoder Image
 imageDecoder =
-  Json.at ["source"] (Json.object3 Image
-    ("url" := Json.string)
-    ("width" := Json.int)
-    ("height" := Json.int)
-  )
+    Json.at [ "source" ]
+        (Json.object3 Image
+            ("url" := Json.string)
+            ("width" := Json.int)
+            ("height" := Json.int)
+        )
