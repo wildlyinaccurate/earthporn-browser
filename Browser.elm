@@ -209,20 +209,6 @@ view model =
             ]
 
 
-currentImgUrl : Model -> String
-currentImgUrl model =
-    let
-        currentPost =
-            Array.get model.position (Array.fromList model.posts)
-    in
-        case currentPost of
-            Just post ->
-                post.source.url
-
-            Nothing ->
-                "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-
-
 imgStyle : String -> Attribute msg
 imgStyle url =
     style
